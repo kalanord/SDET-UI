@@ -22,12 +22,20 @@
             <version>3.17.2</version>
             <scope>test</scope>
         </dependency>
-        <!-- WebDriverManagerDependency -->
+        <!-- WebDriverManager Dependency -->
         <dependency>
             <groupId>io.github.bonigarcia</groupId>
             <artifactId>webdrivermanager</artifactId>
             <version>4.2.2</version>
         </dependency>
+        <!-- TestNG Dependency -->
+        <dependency>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
+            <version>7.3.0</version>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
     
 </project>
