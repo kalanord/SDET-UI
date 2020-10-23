@@ -3,6 +3,7 @@ package com;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.testng.Reporter;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeClass;
@@ -33,5 +34,11 @@ public class UIBaseTest {
         if (driver != null) {
             driver.quit();
         }
+        updateAndReportStatus("Done! Screenshots available in test-output/screenshots");
+    }
+
+    protected static void updateAndReportStatus(String newStatus) {
+        Reporter.log(newStatus);
+        System.out.println(newStatus);
     }
 }

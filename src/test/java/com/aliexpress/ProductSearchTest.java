@@ -6,15 +6,15 @@ import com.aliexpress.pages.ProductPage;
 import com.aliexpress.pages.SearchResultsPage;
 import org.testng.annotations.Test;
 
-import static com.aliexpress.pages.BasePage.updateAndReportStatus;
+import java.io.IOException;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class ProductSearchTest extends UIBaseTest {
 
     @Test(testName = "Challenge Test")
-    public void TestProductSearch() {
-
-        //For the sake of simplicity, test data was input here, but if this test could be fed with a data provider
+    public void TestProductSearch() throws IOException {
+        //For the sake of simplicity, test data was input here, but it would be better using ddt
         int numberOfItemOrder = 2;
         String searchKey = "iphone";
         String url = "http://aliexpress.com";
@@ -34,7 +34,7 @@ public class ProductSearchTest extends UIBaseTest {
 
         ProductPage productPage = new ProductPage(driver);
         productPage.switchToLastOpenedTab();
-
-        updateAndReportStatus("Test completed!");
+        assertThat(productPage.areProductionActionButtonsPresent()).isTrue();
+        productPage.attachScreenshot();
     }
 }

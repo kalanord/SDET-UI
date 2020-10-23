@@ -1,15 +1,20 @@
 package com.aliexpress.pages;
 
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.apache.commons.io.FileUtils;
+import org.openqa.selenium.*;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Reporter;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 public class BasePage {
 
@@ -19,7 +24,7 @@ public class BasePage {
         this.driver = driver;
     }
 
-    public static void updateAndReportStatus(String newStatus) {
+    protected static void updateAndReportStatus(String newStatus) {
         Reporter.log(newStatus);
         System.out.println(newStatus);
     }
@@ -55,8 +60,17 @@ public class BasePage {
     }
 
     public void switchToLastOpenedTab() {
-        updateAndReportStatus("Switching to control last opened tab...");
+        updateAndReportStatus("Switching to last opened tab...");
         ArrayList<String> windowHandles = new ArrayList<>(driver.getWindowHandles());
         driver.switchTo().window(windowHandles.get(windowHandles.size() - 1));
+    }
+
+    public void attachScreenshot() throws IOException {
+        Reporter.setEscapeHtml(false);
+        File scrFile = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar.getInstance().getTime()) + ".png";
+        Path path = Paths.get(System.getProperty("user.dir"),"test-output", "screenshots", timeStamp);
+        File screenshot = new File(path.toString());
+        FileUtils.moveFile(scrFile, screenshot);
     }
 }
