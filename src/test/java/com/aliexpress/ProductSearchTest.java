@@ -1,53 +1,40 @@
 package com.aliexpress;
 
 import com.UIBaseTest;
-import org.openqa.selenium.By;
-import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.StaleElementReferenceException;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.interactions.Actions;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
-import org.testng.Reporter;
+import com.aliexpress.pages.HomePage;
+import com.aliexpress.pages.ProductPage;
+import com.aliexpress.pages.SearchResultsPage;
 import org.testng.annotations.Test;
 
-import java.time.Duration;
-import java.util.ArrayList;
+import static com.aliexpress.pages.BasePage.updateAndReportStatus;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class ProductSearchTest extends UIBaseTest {
 
-    @Test
+    @Test(testName = "Challenge Test")
     public void TestProductSearch() {
-        driver.get("http://aliexpress.com");
-        driver.findElement(By.id("search-key")).sendKeys("iphone\n");
 
-        try {
-            driver.findElement(By.className("next-dialog-close")).click();
-        } catch (NoSuchElementException e) {
-            Reporter.log("No overlay was found");
-        }
+        //For the sake of simplicity, test data was input here, but if this test could be fed with a data provider
+        int numberOfItemOrder = 2;
+        String searchKey = "iphone";
+        String url = "http://aliexpress.com";
 
-        scrollUntilFullPageIsLoaded();
-        WebElement element = driver.findElement(By.className("next-pagination-list"))
-                            .findElement(By.xpath("button[contains(text(), '2')]"));
-        Actions actions = new Actions(driver);
-        actions.moveToElement(element);
-        actions.perform();
-        element.click();
-        clickOnAd();
-        ArrayList<String> windowHandles =  new ArrayList<>(driver.getWindowHandles());
-        driver.switchTo().window(windowHandles.get(windowHandles.size() - 1));
-        Reporter.log("Done");
+        updateAndReportStatus("Starting test. Going to " + url);
+        driver.get(url);
+
+        HomePage homePage = new HomePage(driver);
+        homePage.searchFor(searchKey);
+
+        SearchResultsPage searchResultsPage = new SearchResultsPage(driver);
+        searchResultsPage.closeOverlaysIfAny();
+        searchResultsPage.scrollDownUntilPageIsFullyLoaded();
+        searchResultsPage.goToPageNumber(2);
+        assertThat(searchResultsPage.getItemListSize()).isGreaterThanOrEqualTo(numberOfItemOrder);
+        searchResultsPage.clickOnItemNumber(numberOfItemOrder);
+
+        ProductPage productPage = new ProductPage(driver);
+        productPage.switchToLastOpenedTab();
+
+        updateAndReportStatus("Test completed!");
     }
-
-    private void clickOnAd() {
-        try {
-            driver.findElements(By.cssSelector(".list-item")).get(1).click();
-        } catch (StaleElementReferenceException e) {
-            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-            wait.until(ExpectedConditions.elementToBeClickable(By.className("logo-base")));
-            clickOnAd();
-        }
-    }
-
 }
